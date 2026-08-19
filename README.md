@@ -4,10 +4,6 @@ PowerShell scripts to stand up a single-server Active Directory lab environment
 for **ecorp.co.za**: configure networking, promote the server to a domain
 controller, build a base OU structure, and provision sample user accounts.
 
-> ⚠️ **Lab use only.** Passwords are stored in plaintext in these scripts for
-> simplicity. Do not reuse this approach, or these passwords, anywhere outside
-> an isolated test environment.
-
 ## Requirements
 
 - Windows Server (tested for a single-DC lab forest)
