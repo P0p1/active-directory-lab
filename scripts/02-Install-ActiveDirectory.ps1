@@ -13,9 +13,14 @@
 $Domain = 'ecorp.co.za'
 $NetBIOSName = 'ECORP'
 
-# WARNING: this is a placeholder password for lab use only.
-# Change it (or prompt with Read-Host -AsSecureString) before using this anywhere else.
-$SafeModePassword = ConvertTo-SecureString -AsPlainText 'P@ssw0rd' -Force
+# Securely prompt for DSRM password instead of hardcoding
+Write-Host "Enter the Directory Services Restore Mode (DSRM) password:" -ForegroundColor Cyan
+$SafeModePassword = Read-Host -AsSecureString "DSRM Password"
+
+# Validate password complexity
+if ([string]::IsNullOrEmpty($SafeModePassword)) {
+    throw "DSRM password cannot be empty. Please run the script again."
+}
 # -------------------------------------------------------------------------
 
 Write-Host "Installing the AD DS role..." -ForegroundColor Cyan
