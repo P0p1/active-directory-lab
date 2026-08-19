@@ -10,9 +10,9 @@
 # --- Configuration -----------------------------------------------------
 $StaticIP = '192.168.83.10'
 $PrefixLength = 24
-$Gateway = '192.168.83.1'
+$Gateway = '192.168.83.2'  # Fixed: Match VMware NAT Router endpoint per network_architecture.md
 $DNS = '127.0.0.1'   # Points to itself - this server becomes the DNS server once AD DS/DNS is installed in step 2
-$NewComputerName = 'Server01'
+$NewComputerName = 'Server01'  # Fixed: Typo corrected (was Serve01 in docs)
 # -------------------------------------------------------------------------
 
 $Interface = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Select-Object -First 1

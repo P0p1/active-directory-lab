@@ -4,17 +4,37 @@
 .NOTES
     Run as a Domain Admin (or equivalent), once the domain controller is up.
     You can modify $OUList to include any additional OUs you want to create.
+.PARAMETER ConfigPath
+    Optional path to centralized configuration file. If not provided, uses default values.
+.EXAMPLE
+    .\03-Build-OU-Structure.ps1 -ConfigPath "C:\config\ADLabConfig.ini"
 #>
+
+param(
+    [string]$ConfigPath = "$PSScriptRoot\..\config\ADLabConfig.ini"
+)
 
 Import-Module ActiveDirectory
 
-$OUList = @(
-    'OU=Finance,DC=ecorp,DC=co,DC=za',
-    'OU=Groups,DC=ecorp,DC=co,DC=za',
-    'OU=Computers,DC=ecorp,DC=co,DC=za',
-    'OU=Servers,DC=ecorp,DC=co,DC=za',
-    'OU=Workstations,DC=ecorp,DC=co,DC=za'
-)
+# Load configuration from file if it exists
+if (Test-Path $ConfigPath) {
+    Write-Host "Loading configuration from $ConfigPath" -ForegroundColor Cyan
+    $Config = Get-IniContent -Path $ConfigPath
+    $BaseOU = $Config.OrganizationalUnits.BaseOU
+    $OUs = $Config.OrganizationalUnits.OUs -split ', '
+    
+    # Build full distinguished names for each OU
+    $OUList = $OUs | ForEach-Object { "$_,$BaseOU" }
+} else {
+    Write-Host "Configuration file not found at $ConfigPath, using default values" -ForegroundColor Yellow
+    $OUList = @(
+        'OU=Finance,DC=ecorp,DC=co,DC=za',
+        'OU=Groups,DC=ecorp,DC=co,DC=za',
+        'OU=Computers,DC=ecorp,DC=co,DC=za',
+        'OU=Servers,DC=ecorp,DC=co,DC=za',
+        'OU=Workstations,DC=ecorp,DC=co,DC=za'
+    )
+}
 
 # Sort shallowest-first so a parent OU is always created before any OU nested inside it
 $OUList = $OUList | Sort-Object { ($_ -split ',').Count }
